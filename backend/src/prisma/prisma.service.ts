@@ -19,7 +19,7 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
-    const connectionString = `${process.env.POSTGRES_PRISMA_URL}`;
+    const connectionString = `${process.env.STORAGE_POSTGRES_PRISMA_URL}`;
     const pool = new Pool({ connectionString });
     // Usamos 'any' para evitar el error de tipado estricto entre versiones de Prisma y Neon
     const adapter = new PrismaNeon(pool as any);
