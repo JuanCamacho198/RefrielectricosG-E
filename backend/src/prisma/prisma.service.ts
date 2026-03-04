@@ -7,9 +7,9 @@ import {
 import { PrismaClient } from '../../generated/prisma/client';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
-import ws from 'ws';
+import * as ws from 'ws';
 
-neonConfig.webSocketConstructor = ws;
+neonConfig.webSocketConstructor = ws as any;
 
 @Injectable()
 export class PrismaService
@@ -21,7 +21,8 @@ export class PrismaService
   constructor() {
     const connectionString = `${process.env.POSTGRES_PRISMA_URL}`;
     const pool = new Pool({ connectionString });
-    const adapter = new PrismaNeon(pool);
+    // Usamos 'any' para evitar el error de tipado estricto entre versiones de Prisma y Neon
+    const adapter = new PrismaNeon(pool as any);
     super({ adapter });
   }
 
