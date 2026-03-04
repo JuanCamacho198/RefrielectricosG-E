@@ -66,3 +66,4 @@ AGENTS.md
 .vercel
 .env*.local
 .env*.vercel
+.env*.vercel.prod
