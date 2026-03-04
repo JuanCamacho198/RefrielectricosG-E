@@ -7,6 +7,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import LinkSelector from '@/components/admin/LinkSelector';
 import Card from '@/components/ui/Card';
 import ImageUploadWithCrop from '@/components/ui/ImageUploadWithCrop';
 import { useToast } from '@/context/ToastContext';
@@ -163,11 +164,10 @@ export default function NewBannerPage() {
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Enlace y Botón</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
+            <LinkSelector
               label="Enlace de Destino"
-              name="link"
               value={formData.link}
-              onChange={handleChange}
+              onChange={(val) => setFormData(prev => ({ ...prev, link: val }))}
               placeholder="/products?category=ofertas"
             />
 

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Save, Globe, Mail, Bell, Truck, RefreshCw, Layout, Palette, Share2, Building2, Upload, X, Truck as TruckIcon, ShieldCheck, Headphones, CreditCard, Package, BadgeCheck, Clock, Gift, Zap, Heart } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import LinkSelector from '@/components/admin/LinkSelector';
 import Card from '@/components/ui/Card';
 import { useToast } from '@/context/ToastContext';
 import api from '@/lib/api';
@@ -702,11 +703,13 @@ export default function AdminSettingsPage() {
                   placeholder="¡Ofertas de Navidad!"
                 />
 
-                <Input
+                <LinkSelector
                   label="Enlace (Opcional)"
-                  name="customBannerLink"
                   value={settings.customBannerLink || ''}
-                  onChange={handleChange}
+                  onChange={(val) => queryClient.setQueryData(['store-settings'], (old: StoreSettings | undefined) => ({
+                    ...old || settings,
+                    customBannerLink: val,
+                  }))}
                   placeholder="/products?category=navidad"
                 />
 
