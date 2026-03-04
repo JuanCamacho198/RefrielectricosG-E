@@ -36,8 +36,7 @@ export class PrismaService
     if (connectionString && isNeonConnectionString(connectionString)) {
       const pool = new Pool({ connectionString });
       options.adapter = new PrismaNeon(pool as any);
-      // datasourceUrl is needed so Prisma knows which DB to connect to via adapter
-      options.datasourceUrl = connectionString;
+      // When using a Driver Adapter, do NOT set datasourceUrl — the adapter manages the connection
     } else if (connectionString) {
       // Non-Neon URL (e.g., Railway, local) — use standard Prisma connection
       options.datasourceUrl = connectionString;
