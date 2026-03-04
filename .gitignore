@@ -65,3 +65,4 @@ AGENTS.md
 .docs
 .vercel
 .env*.local
+.env*.vercel
