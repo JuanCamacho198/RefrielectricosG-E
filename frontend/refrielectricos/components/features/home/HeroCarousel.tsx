@@ -142,14 +142,6 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
             
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-12 w-full pointer-events-none">
               <div className="max-w-lg text-white space-y-2 md:space-y-4 pointer-events-auto">
-                <motion.span 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-white/20 backdrop-blur-sm rounded-full text-[10px] md:text-sm font-medium border border-white/30"
-                >
-                  {currentSlide.subtitle}
-                </motion.span>
                 <motion.h2 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
