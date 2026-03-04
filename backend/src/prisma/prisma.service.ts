@@ -11,6 +11,14 @@ import * as ws from 'ws';
 
 neonConfig.webSocketConstructor = ws as any;
 
+function isNeonConnectionString(url: string): boolean {
+  return (
+    url.includes('neon.tech') ||
+    url.includes('neon.database') ||
+    url.includes('neondb')
+  );
+}
+
 @Injectable()
 export class PrismaService
   extends PrismaClient
@@ -20,12 +28,19 @@ export class PrismaService
 
   constructor() {
     const connectionString =
-      process.env.STORAGE_POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
+      process.env.STORAGE_POSTGRES_PRISMA_URL ||
+      process.env.STORAGE_DATABASE_URL ||
+      process.env.DATABASE_URL;
 
     const options: any = {};
-    if (connectionString) {
+    if (connectionString && isNeonConnectionString(connectionString)) {
       const pool = new Pool({ connectionString });
       options.adapter = new PrismaNeon(pool as any);
+      // datasourceUrl is needed so Prisma knows which DB to connect to via adapter
+      options.datasourceUrl = connectionString;
+    } else if (connectionString) {
+      // Non-Neon URL (e.g., Railway, local) — use standard Prisma connection
+      options.datasourceUrl = connectionString;
     }
     super(options);
   }
@@ -39,8 +54,8 @@ export class PrismaService
   }
 
   private async connectWithRetry() {
-    const MAX_RETRIES = 15; // 15 intentos
-    const RETRY_DELAY = 3000; // 3 segundos entre intentos
+    const MAX_RETRIES = 3; // 3 intentos (Vercel has a 10s timeout on Hobby)
+    const RETRY_DELAY = 2000; // 2 segundos entre intentos
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
