@@ -4,11 +4,7 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
-    "build": "nest build",
-    "env:push:backend": "pwsh -File scripts/sync-env.ps1 -Project backend -Action push",
-    "env:pull:backend": "pwsh -File scripts/sync-env.ps1 -Project backend -Action pull",
-    "env:push:frontend": "pwsh -File scripts/sync-env.ps1 -Project frontend -Action push",
-    "env:pull:frontend": "pwsh -File scripts/sync-env.ps1 -Project frontend -Action pull"
+    "build": "nest build"
   },
   "devDependencies": {
     "husky": "^9.0.0",
