@@ -5,6 +5,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaClient } from '../../generated/prisma/client';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import ws from 'ws';
+
+neonConfig.webSocketConstructor = ws;
 
 @Injectable()
 export class PrismaService
@@ -12,6 +17,13 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   private readonly logger = new Logger(PrismaService.name);
+
+  constructor() {
+    const connectionString = `${process.env.POSTGRES_PRISMA_URL}`;
+    const pool = new Pool({ connectionString });
+    const adapter = new PrismaNeon(pool);
+    super({ adapter });
+  }
 
   async onModuleInit() {
     await this.connectWithRetry();
@@ -28,7 +40,9 @@ export class PrismaService
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
         await this.$connect();
-        this.logger.log('✅ Conexión a base de datos establecida.');
+        this.logger.log(
+          '✅ Conexión a base de datos (Neon Serverless) establecida.',
+        );
         return; // Salir de la función si conecta
       } catch (error) {
         this.logger.warn(
