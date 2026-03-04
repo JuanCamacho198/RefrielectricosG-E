@@ -9,7 +9,13 @@ import { Pool, neonConfig } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import * as ws from 'ws';
 
-neonConfig.webSocketConstructor = ws as any;
+// In serverless environments (Vercel), WebSocket connections may not work reliably.
+// Use the `ws` polyfill only when a WebSocket constructor is not globally available.
+if (typeof WebSocket === 'undefined') {
+  neonConfig.webSocketConstructor = ws as any;
+}
+// Optimize for serverless: disable connection caching to avoid stale connections
+neonConfig.poolQueryViaFetch = true;
 
 function isNeonConnectionString(url: string): boolean {
   return (
@@ -25,6 +31,7 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   private readonly logger = new Logger(PrismaService.name);
+  private readonly usingNeonAdapter: boolean;
 
   constructor() {
     const connectionString =
@@ -33,19 +40,31 @@ export class PrismaService
       process.env.DATABASE_URL;
 
     const options: any = {};
+    let usingNeon = false;
+
     if (connectionString && isNeonConnectionString(connectionString)) {
       const pool = new Pool({ connectionString });
       options.adapter = new PrismaNeon(pool as any);
       // When using a Driver Adapter, do NOT set datasourceUrl — the adapter manages the connection
+      usingNeon = true;
     } else if (connectionString) {
       // Non-Neon URL (e.g., Railway, local) — use standard Prisma connection
       options.datasourceUrl = connectionString;
     }
     super(options);
+    this.usingNeonAdapter = usingNeon;
   }
 
   async onModuleInit() {
-    await this.connectWithRetry();
+    if (this.usingNeonAdapter) {
+      // With Neon Driver Adapter, connections are managed lazily per-query.
+      // Calling $connect() is unnecessary and may cause issues in serverless environments.
+      this.logger.log(
+        '✅ Prisma con Neon Driver Adapter listo (conexiones gestionadas por pool).',
+      );
+    } else {
+      await this.connectWithRetry();
+    }
   }
 
   async onModuleDestroy() {
@@ -53,22 +72,19 @@ export class PrismaService
   }
 
   private async connectWithRetry() {
-    const MAX_RETRIES = 3; // 3 intentos (Vercel has a 10s timeout on Hobby)
-    const RETRY_DELAY = 2000; // 2 segundos entre intentos
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 2000;
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
         await this.$connect();
-        this.logger.log(
-          '✅ Conexión a base de datos (Neon Serverless) establecida.',
-        );
-        return; // Salir de la función si conecta
+        this.logger.log('✅ Conexión a base de datos establecida.');
+        return;
       } catch (error) {
         this.logger.warn(
-          `⚠️ Intento ${i + 1}/${MAX_RETRIES} fallido. La DB puede estar despertando. Reintentando en 3s...`,
+          `⚠️ Intento ${i + 1}/${MAX_RETRIES} fallido. Reintentando en ${RETRY_DELAY}ms...`,
         );
 
-        // Si es el último intento, lanzamos el error para que ahora sí falle
         if (i === MAX_RETRIES - 1) {
           this.logger.error(
             '❌ No se pudo conectar a la DB tras múltiples intentos.',
@@ -76,7 +92,6 @@ export class PrismaService
           throw error;
         }
 
-        // Esperar X segundos antes de intentar de nuevo (Mantiene el proceso vivo)
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
       }
     }
