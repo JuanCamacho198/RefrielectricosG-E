@@ -7,8 +7,8 @@ Refrielectricos is a full-stack e-commerce platform for refrigeration equipment 
 **Tech Stack:**
 - **Backend**: NestJS, Prisma ORM, PostgreSQL, JWT Authentication
 - **Frontend**: Next.js 14 (App Router), React, Tailwind CSS, Zustand
-- **Database**: PostgreSQL (External)
-- **Cloud**: Cloudinary (image hosting)
+- **Database**: PostgreSQL on Neon (Serverless)
+- **Cloud**: Cloudinary (image hosting), Vercel (deployments)
 - **Payments**: Wompi integration
 
 ---

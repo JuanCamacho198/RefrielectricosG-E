@@ -19,18 +19,15 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
-    // Si process.env.STORAGE_POSTGRES_PRISMA_URL no existe (como en build local), usamos DATABASE_URL o un string vacío.
-    // Esto previene que Pool() lance el error "No database host or connection string was set"
     const connectionString =
       process.env.STORAGE_POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
 
-    if (!connectionString) {
-      super(); // Iniciar Prisma sin adaptador si no hay URL (evita error 500 si Prisma tiene su propia config en schema)
-    } else {
+    const options: any = {};
+    if (connectionString) {
       const pool = new Pool({ connectionString });
-      const adapter = new PrismaNeon(pool as any);
-      super({ adapter });
+      options.adapter = new PrismaNeon(pool as any);
     }
+    super(options);
   }
 
   async onModuleInit() {

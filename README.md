@@ -29,7 +29,8 @@ Plataforma de comercio electrónico profesional desarrollada para **Refrielectri
 ### Infraestructura & Herramientas
 - **Monorepo:** pnpm workspaces
 - **Despliegue Frontend:** Vercel
-- **Despliegue Backend:** Render / Railway
+- **Despliegue Backend:** Vercel (Serverless Functions)
+- **Base de Datos:** PostgreSQL (Neon Tech Serverless)
 - **CI/CD:** GitHub Actions
 - **Linter/Formatter:** ESLint + Prettier
 
