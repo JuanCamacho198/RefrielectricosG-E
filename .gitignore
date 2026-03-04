@@ -63,3 +63,5 @@ UX_IMPROVEMENTS.md
 UX_REPORT.md
 AGENTS.md
 .docs
+.vercel
+.env*.local
