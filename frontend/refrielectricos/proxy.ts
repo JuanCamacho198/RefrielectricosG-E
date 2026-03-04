@@ -14,7 +14,7 @@ const BYPASS_ROUTES = [
 // Admin role check paths (these users can bypass maintenance)
 const ADMIN_PATHS = ['/admin'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if route should bypass maintenance mode
