@@ -56,6 +56,8 @@ uploads/
 *.bak
 
 # Custom ignores
+openspec/
+
 github/copilot-instructions.md
 ESTADO_DEL_PROYECTO.md
 pruebas.md
