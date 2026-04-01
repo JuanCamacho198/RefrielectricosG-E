@@ -4,13 +4,22 @@ import { Client } from '@elastic/elasticsearch';
 
 @Injectable()
 export class ElasticsearchProvider implements OnModuleInit, OnModuleDestroy {
-  public client: Client;
+  public client?: Client;
 
   constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit() {
     const elasticsearchUrl =
       this.configService.get<string>('ELASTICSEARCH_URL');
+    const elasticsearchApiKey = this.configService.get<string>(
+      'ELASTICSEARCH_API_KEY',
+    );
+    const elasticsearchUsername = this.configService.get<string>(
+      'ELASTICSEARCH_USERNAME',
+    );
+    const elasticsearchPassword = this.configService.get<string>(
+      'ELASTICSEARCH_PASSWORD',
+    );
 
     if (!elasticsearchUrl) {
       console.warn(
@@ -19,9 +28,21 @@ export class ElasticsearchProvider implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    this.client = new Client({
+    const clientOptions: ConstructorParameters<typeof Client>[0] = {
       node: elasticsearchUrl,
-    });
+    };
+
+    // Elastic Cloud normally requires auth (API key or username/password)
+    if (elasticsearchApiKey) {
+      clientOptions.auth = { apiKey: elasticsearchApiKey };
+    } else if (elasticsearchUsername && elasticsearchPassword) {
+      clientOptions.auth = {
+        username: elasticsearchUsername,
+        password: elasticsearchPassword,
+      };
+    }
+
+    this.client = new Client(clientOptions);
 
     try {
       await this.client.ping();
@@ -31,7 +52,10 @@ export class ElasticsearchProvider implements OnModuleInit, OnModuleDestroy {
         'ElasticsearchProvider: Failed to connect to Elasticsearch:',
         error,
       );
-      throw error;
+      console.warn(
+        'ElasticsearchProvider: Continuing without Elasticsearch (fallback mode).',
+      );
+      this.client = undefined;
     }
   }
 
