@@ -2,16 +2,24 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  Inject,
+  Optional,
 } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { SearchService, SEARCH_SERVICE_TOKEN } from '../search/search.service';
 import slugify from 'slugify';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional()
+    @Inject(SEARCH_SERVICE_TOKEN)
+    private readonly searchService?: SearchService,
+  ) {
     if (!this.prisma) {
       console.error('ProductsService: PrismaService is not initialized!');
     }
@@ -48,6 +56,14 @@ export class ProductsService {
         },
       });
       console.log('ProductsService: Product created successfully:', product.id);
+
+      // Index to Elasticsearch
+      if (this.searchService) {
+        await this.searchService.indexProduct(product).catch((err) => {
+          console.error('Failed to index product to Elasticsearch:', err);
+        });
+      }
+
       return product;
     } catch (error) {
       console.error(
@@ -179,10 +195,20 @@ export class ProductsService {
       data.specifications = specifications as unknown as Prisma.InputJsonValue;
     }
 
-    return this.prisma.product.update({
-      where: { id },
-      data,
-    });
+    return this.prisma.product
+      .update({
+        where: { id },
+        data,
+      })
+      .then(async (product) => {
+        // Update index in Elasticsearch
+        if (this.searchService) {
+          await this.searchService.indexProduct(product).catch((err) => {
+            console.error('Failed to update product in Elasticsearch:', err);
+          });
+        }
+        return product;
+      });
   }
 
   remove(id: string) {
@@ -231,6 +257,13 @@ export class ProductsService {
       await tx.productVariant.deleteMany({ where: { productId: id } });
 
       await tx.product.delete({ where: { id } });
+
+      // Delete from Elasticsearch index
+      if (this.searchService) {
+        await this.searchService.deleteFromIndex(id).catch((err) => {
+          console.error('Failed to delete product from Elasticsearch:', err);
+        });
+      }
 
       return { status: 'deleted', message: 'Product deleted successfully.' };
     });

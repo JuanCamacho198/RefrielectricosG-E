@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsService } from './products.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { SearchService, SEARCH_SERVICE_TOKEN } from '../search/search.service';
 
 const mockPrismaService = {
   product: {
@@ -12,12 +13,20 @@ const mockPrismaService = {
     findFirst: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    count: jest.fn(),
   },
+  $transaction: jest.fn((cb) => cb(mockPrismaService)),
+};
+
+const mockSearchService = {
+  indexProduct: jest.fn().mockResolvedValue(undefined),
+  deleteFromIndex: jest.fn().mockResolvedValue(undefined),
 };
 
 describe('ProductsService', () => {
   let service: ProductsService;
   let prisma: PrismaService;
+  let searchService: SearchService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,11 +36,18 @@ describe('ProductsService', () => {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
+        {
+          provide: SEARCH_SERVICE_TOKEN,
+          useValue: mockSearchService,
+        },
       ],
     }).compile();
 
     service = module.get<ProductsService>(ProductsService);
     prisma = module.get<PrismaService>(PrismaService);
+    searchService = module.get<SearchService>(SEARCH_SERVICE_TOKEN);
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -87,9 +103,11 @@ describe('ProductsService', () => {
     it('should return an array of products', async () => {
       const products = [{ id: '1', name: 'Product 1' }];
       (prisma.product.findMany as jest.Mock).mockResolvedValue(products);
+      (prisma.product.count as jest.Mock).mockResolvedValue(1);
 
       const result = await service.findAll();
-      expect(result).toEqual(products);
+      expect(result.data).toEqual(products);
+      expect(result.meta.total).toBe(1);
     });
   });
 
