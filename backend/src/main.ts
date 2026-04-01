@@ -23,13 +23,19 @@ async function bootstrap() {
             ? winston.format.json()
             : winston.format.combine(
                 winston.format.colorize({ all: true }),
-                winston.format.printf(
-                  ({ timestamp, level, message, context, ms }) => {
-                    return `${timestamp as string} [${
-                      (context as string) || 'Application'
-                    }] ${level}: ${message as string} ${ms as string}`;
-                  },
-                ),
+                winston.format.printf((info) => {
+                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                  const ts = String(info.timestamp ?? '');
+                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                  const ctx = String(info.context ?? 'Application');
+
+                  const lvl = String(info.level ?? 'info');
+                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                  const msg = String(info.message ?? '');
+                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                  const msVal = String(info.ms ?? '');
+                  return `${ts} [${ctx}] ${lvl}: ${msg} ${msVal}`;
+                }),
               ),
         ),
       }),
