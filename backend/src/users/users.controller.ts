@@ -130,7 +130,9 @@ export class UsersController {
         userName: user.name,
         userEmail: user.email,
         ipAddress: req.ip || req.connection?.remoteAddress,
-        userAgent: req.headers['user-agent'],
+        userAgent: Array.isArray(req.headers['user-agent'])
+          ? req.headers['user-agent'][0]
+          : req.headers['user-agent'],
       });
     }
 
@@ -159,7 +161,9 @@ export class UsersController {
       userName: req.user.name,
       userEmail: req.user.email,
       ipAddress: req.ip || req.connection?.remoteAddress,
-      userAgent: req.headers['user-agent'],
+      userAgent: Array.isArray(req.headers['user-agent'])
+        ? req.headers['user-agent'][0]
+        : req.headers['user-agent'],
     });
 
     // Revoke refresh tokens before deletion
