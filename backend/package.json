@@ -22,7 +22,8 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:push": "prisma db push --accept-data-loss",
     "prisma:baseline": "node prisma/baseline.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "search:sync": "tsx src/scripts/syncProductsToES.ts"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.3.4",
