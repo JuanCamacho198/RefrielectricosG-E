@@ -29,8 +29,14 @@ export default function SearchBox() {
     queryKey: ['search-suggestions', debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery || debouncedQuery.length < 2) return [];
-      const { data } = await api.get<SearchSuggestion[]>(`/products/suggestions?term=${encodeURIComponent(debouncedQuery)}`);
-      return data;
+      try {
+        // Use Elasticsearch autocomplete endpoint
+        const { data } = await api.get<{ products: SearchSuggestion[] }>(`/search/autocomplete?q=${encodeURIComponent(debouncedQuery)}&limit=5`);
+        return data.products || [];
+      } catch (error) {
+        console.error('Autocomplete error:', error);
+        return [];
+      }
     },
     enabled: debouncedQuery.length >= 2,
   });
