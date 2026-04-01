@@ -21,6 +21,7 @@ import { SettingsModule } from './settings/settings.module';
 import { PaymentsModule } from './payments/payments.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { BannersModule } from './banners/banners.module';
+import { SearchModule } from './search/search.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { ExportsModule } from './modules/exports/exports.module';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
@@ -65,6 +66,7 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
     PaymentsModule,
     CouponsModule,
     BannersModule,
+    SearchModule,
     AuditLogsModule,
     ExportsModule,
   ],
