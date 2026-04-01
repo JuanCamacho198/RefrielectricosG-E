@@ -2,23 +2,20 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
-  Inject,
   Optional,
 } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { SearchService, SEARCH_SERVICE_TOKEN } from '../search/search.service';
+import { SearchService } from '../search/search.service';
 import slugify from 'slugify';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly prisma: PrismaService,
-    @Optional()
-    @Inject(SEARCH_SERVICE_TOKEN)
-    private readonly searchService?: SearchService,
+    @Optional() private readonly searchService?: SearchService,
   ) {
     if (!this.prisma) {
       console.error('ProductsService: PrismaService is not initialized!');

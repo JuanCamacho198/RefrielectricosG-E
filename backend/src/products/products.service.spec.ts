@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsService } from './products.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { SearchService, SEARCH_SERVICE_TOKEN } from '../search/search.service';
+import { SearchService } from '../search/search.service';
 
 const mockPrismaService = {
   product: {
@@ -37,7 +37,7 @@ describe('ProductsService', () => {
           useValue: mockPrismaService,
         },
         {
-          provide: SEARCH_SERVICE_TOKEN,
+          provide: SearchService,
           useValue: mockSearchService,
         },
       ],
@@ -45,7 +45,7 @@ describe('ProductsService', () => {
 
     service = module.get<ProductsService>(ProductsService);
     prisma = module.get<PrismaService>(PrismaService);
-    searchService = module.get<SearchService>(SEARCH_SERVICE_TOKEN);
+    searchService = module.get<SearchService>(SearchService);
 
     jest.clearAllMocks();
   });

@@ -1,10 +1,8 @@
-import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@elastic/elasticsearch';
 import { ElasticsearchProvider } from './elasticsearch.provider';
 import { PRODUCTS_INDEX_NAME } from './constants';
-
-export const SEARCH_SERVICE_TOKEN = 'SEARCH_SERVICE';
 
 export interface SearchResult {
   products: any[];
