@@ -1,26 +1,23 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { PrismaService } from './prisma/prisma.service';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello() {
+    return {
+      status: 'ok',
+      message: 'Refrielectricos API is running',
+      version: '1.0.0',
+      docs: '/api/docs',
+      frontend: 'https://refrielectricos-g-e.vercel.app/',
+    };
   }
 
   @Get('health')
   getHealth() {
-    return { status: 'ok' };
-  }
-
-  @Get('users')
-  async getUsers() {
-    return this.prisma.user.findMany();
+    return { status: 'ok', timestamp: new Date().toISOString() };
   }
 }
