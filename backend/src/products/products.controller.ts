@@ -74,7 +74,9 @@ export class ProductsController {
         userName: req.user?.name,
         userEmail: req.user?.email,
         ipAddress: req.ip || req.connection?.remoteAddress,
-        userAgent: req.headers['user-agent'],
+        userAgent: Array.isArray(req.headers['user-agent'])
+          ? req.headers['user-agent'][0]
+          : req.headers['user-agent'],
       });
 
       return product;
@@ -230,7 +232,9 @@ export class ProductsController {
       userName: req.user?.name,
       userEmail: req.user?.email,
       ipAddress: req.ip || req.connection?.remoteAddress,
-      userAgent: req.headers['user-agent'],
+      userAgent: Array.isArray(req.headers['user-agent'])
+        ? req.headers['user-agent'][0]
+        : req.headers['user-agent'],
     });
 
     return result;

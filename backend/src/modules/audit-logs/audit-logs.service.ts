@@ -45,7 +45,7 @@ export class AuditLogsService {
     changes: Record<string, any>,
     req: Request,
   ) {
-    const user = req.user as any;
+    const user = req.user;
     const oldValues: Record<string, any> = {};
     const newValues: Record<string, any> = {};
 
@@ -64,8 +64,10 @@ export class AuditLogsService {
       userId: user?.id,
       userName: user?.name,
       userEmail: user?.email,
-      ipAddress: req.ip || req.connection.remoteAddress,
-      userAgent: req.headers['user-agent'],
+      ipAddress: req.ip || req.connection?.remoteAddress,
+      userAgent: Array.isArray(req.headers['user-agent'])
+        ? req.headers['user-agent'][0]
+        : req.headers['user-agent'],
     });
   }
 
