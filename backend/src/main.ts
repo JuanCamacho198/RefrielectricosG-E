@@ -54,7 +54,7 @@ async function bootstrap() {
     }),
   );
 
-  // app.setGlobalPrefix('api'); // Removed - root endpoint now accessible
+  app.setGlobalPrefix('api');
 
   // Global Exception Filters (order matters - most specific to most general)
   app.useGlobalFilters(
