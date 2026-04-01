@@ -9,7 +9,19 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
+      "dest": "src/main.ts"
+    },
+    {
+      "src": "/docs",
+      "dest": "src/main.ts"
+    },
+    {
+      "src": "/docs/(.*)",
+      "dest": "src/main.ts"
+    },
+    {
+      "src": "/health",
       "dest": "src/main.ts"
     }
   ]
