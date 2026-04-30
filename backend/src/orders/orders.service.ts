@@ -5,7 +5,7 @@ import { CouponsService } from '../coupons/coupons.service';
 import { EmailService } from '../modules/email/email.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import type { Product, Order } from '../../generated/prisma/client';
+import type { Product, Order } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {

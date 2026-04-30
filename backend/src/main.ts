@@ -14,31 +14,28 @@ import {
 
 async function setupApp(app: any) {
   const logger = WinstonModule.createLogger({
-    transports: [
-      new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.ms(),
-          process.env.NODE_ENV === 'production'
-            ? winston.format.json()
-            : winston.format.combine(
-                winston.format.colorize({ all: true }),
-                winston.format.printf((info) => {
-                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                  const ts = String(info.timestamp ?? '');
-                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                  const ctx = String(info.context ?? 'Application');
-                  const lvl = String(info.level ?? 'info');
-                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                  const msg = String(info.message ?? '');
-                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                  const msVal = String(info.ms ?? '');
-                  return `${ts} [${ctx}] ${lvl}: ${msg} ${msVal}`;
-                }),
-              ),
-        ),
-      }),
-    ],
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.ms(),
+      process.env.NODE_ENV === 'production'
+        ? winston.format.json()
+        : winston.format.combine(
+            winston.format.colorize({ all: true }),
+            winston.format.printf((info) => {
+              // eslint-disable-next-line @typescript-eslint/no-base-to-string
+              const ts = String(info.timestamp ?? '');
+              // eslint-disable-next-line @typescript-eslint/no-base-to-string
+              const ctx = String(info.context ?? 'Application');
+              const lvl = String(info.level ?? 'info');
+              // eslint-disable-next-line @typescript-eslint/no-base-to-string
+              const msg = String(info.message ?? '');
+              // eslint-disable-next-line @typescript-eslint/no-base-to-string
+              const msVal = String(info.ms ?? '');
+              return `${ts} [${ctx}] ${lvl}: ${msg} ${msVal}`;
+            }),
+          ),
+    ),
+    transports: [new winston.transports.Console()],
   });
 
   app.useLogger(logger);

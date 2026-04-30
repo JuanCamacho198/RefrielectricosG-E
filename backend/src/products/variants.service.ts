@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVariantDto, UpdateVariantDto } from './dto/create-variant.dto';
 import slugify from 'slugify';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class VariantsService {

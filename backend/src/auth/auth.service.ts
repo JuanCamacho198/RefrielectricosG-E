@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { User } from '../../generated/prisma/client';
+import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { OAuth2Client } from 'google-auth-library';
 import { EmailService } from '../modules/email/email.service';
@@ -72,11 +72,11 @@ export class AuthService {
     const expiresIn = user.role === 'ADMIN' ? '24h' : '1h';
 
     // Generate access token
-    const accessToken = this.jwtService.sign(payload, { expiresIn });
+    const accessToken = this.jwtService.sign(payload as object, { expiresIn });
 
     // Generate refresh token
     const refreshTokenPayload = { sub: user.id };
-    const refreshToken = this.jwtService.sign(refreshTokenPayload, {
+    const refreshToken = this.jwtService.sign(refreshTokenPayload as object, {
       expiresIn: '7d', // Refresh token lasts 7 days
     });
 
@@ -158,13 +158,18 @@ export class AuthService {
         role: user.role,
       };
       const expiresIn = user.role === 'ADMIN' ? '24h' : '1h';
-      const newAccessToken = this.jwtService.sign(accessPayload, { expiresIn });
+      const newAccessToken = this.jwtService.sign(accessPayload as object, {
+        expiresIn,
+      });
 
       // ROTATION: Generate new refresh token
       const newRefreshTokenPayload = { sub: user.id };
-      const newRefreshToken = this.jwtService.sign(newRefreshTokenPayload, {
-        expiresIn: '7d',
-      });
+      const newRefreshToken = this.jwtService.sign(
+        newRefreshTokenPayload as object,
+        {
+          expiresIn: '7d',
+        },
+      );
 
       // Store new refresh token in database
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days

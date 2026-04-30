@@ -7,7 +7,7 @@ import {
   ExportUsersDto,
   ExportFormat,
 } from './dto/export.dto';
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ExportsService {

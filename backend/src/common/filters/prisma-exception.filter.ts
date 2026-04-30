@@ -8,7 +8,7 @@ import {
 import { Request, Response } from 'express';
 import type { ErrorResponse } from '../interfaces/error-response.interface';
 
-// Import Prisma error types directly from runtime
+// Import Prisma error types directly from the generated client
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,

@@ -10,7 +10,7 @@ import { CouponsService } from '../coupons/coupons.service';
 import { CreatePaymentSessionDto } from './dto/create-payment-session.dto';
 import { EpaycoConfirmationDto } from './dto/epayco-confirmation.dto';
 import * as crypto from 'crypto';
-import type { Product, OrderStatus } from '../../generated/prisma/client';
+import type { Product, OrderStatus } from '@prisma/client';
 
 /**
  * ePayco Payment Integration Service
