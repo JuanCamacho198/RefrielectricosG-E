@@ -8,6 +8,8 @@ const dbUrl =
   process.env.STORAGE_DATABASE_URL ||
   process.env.DATABASE_URL;
 
+const directUrl = process.env.STORAGE_POSTGRES_URL_NON_POOLING || dbUrl;
+
 if (!dbUrl) {
   throw new Error(
     'No database URL found. Set STORAGE_POSTGRES_PRISMA_URL, STORAGE_DATABASE_URL, or DATABASE_URL.',
@@ -19,7 +21,6 @@ export default defineConfig({
   migrations: {
     path: 'prisma/migrations',
   },
-  engine: 'classic',
   datasource: {
     url: dbUrl,
   },

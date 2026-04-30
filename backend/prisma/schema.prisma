@@ -4,10 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("STORAGE_POSTGRES_PRISMA_URL") // Connection pooling URL
-  directUrl = env("STORAGE_POSTGRES_URL_NON_POOLING") // Direct connection URL for migrations
+  provider = "postgresql"
 }
+
 
 model User {
   id                   String         @id @default(cuid())

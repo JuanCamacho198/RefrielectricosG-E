@@ -8,4 +8,4 @@ export interface AuditLogMetadata {
 }
 
 export const AuditLog = (action: string, entity: string) =>
-  SetMetadata(AUDIT_LOG_KEY, { action, entity } as AuditLogMetadata);
+  SetMetadata(AUDIT_LOG_KEY, { action, entity });

@@ -12,7 +12,7 @@ import {
   AllExceptionsFilter,
 } from './common/filters';
 
-async function bootstrap() {
+async function setupApp(app: any) {
   const logger = WinstonModule.createLogger({
     transports: [
       new winston.transports.Console({
@@ -28,7 +28,6 @@ async function bootstrap() {
                   const ts = String(info.timestamp ?? '');
                   // eslint-disable-next-line @typescript-eslint/no-base-to-string
                   const ctx = String(info.context ?? 'Application');
-
                   const lvl = String(info.level ?? 'info');
                   // eslint-disable-next-line @typescript-eslint/no-base-to-string
                   const msg = String(info.message ?? '');
@@ -42,12 +41,8 @@ async function bootstrap() {
     ],
   });
 
-  const app = await NestFactory.create(AppModule, {
-    logger: logger,
-  });
+  app.useLogger(logger);
 
-  // 1. CONFIGURACIÓN CRÍTICA DE HELMET
-  // Por defecto helmet bloquea recursos cross-origin. Hay que permitirlo.
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -56,7 +51,6 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // Global Exception Filters (order matters - most specific to most general)
   app.useGlobalFilters(
     new PrismaExceptionFilter(),
     new HttpExceptionFilter(),
@@ -66,7 +60,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: false, // Changed from true to false to prevent errors on extra fields
+      forbidNonWhitelisted: false,
       transform: true,
       transformOptions: {
         enableImplicitConversion: true,
@@ -74,10 +68,9 @@ async function bootstrap() {
     }),
   );
 
-  // 2. CONFIGURACIÓN DE CORS
   const allowedOrigins = [
     'https://frontend-production-4178.up.railway.app',
-    'https://paginawebrefrielectricos-v2-production.up.railway.app', // Self
+    'https://paginawebrefrielectricos-v2-production.up.railway.app',
     process.env.FRONTEND_URL,
     'http://localhost:3000',
     'http://localhost:3001',
@@ -100,10 +93,35 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-
-  const port = process.env.PORT ?? 4000;
-  // 3. ESCUCHAR EN 0.0.0.0 (Obligatorio para Railway)
-  await app.listen(port, '0.0.0.0');
-  console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
+let cachedApp: any;
+
+async function getApp() {
+  if (!cachedApp) {
+    const app = await NestFactory.create(AppModule);
+    await setupApp(app);
+    await app.init();
+    cachedApp = app.getHttpAdapter().getInstance();
+  }
+  return cachedApp;
+}
+
+// Handler para Vercel
+export default async (req: any, res: any) => {
+  const handler = await getApp();
+  handler(req, res);
+};
+
+// Bootstrap para desarrollo local o Railway
+async function bootstrap() {
+  if (!process.env.VERCEL) {
+    const app = await NestFactory.create(AppModule);
+    await setupApp(app);
+    const port = process.env.PORT ?? 4000;
+    await app.listen(port, '0.0.0.0');
+    console.log(`Application is running on: ${await app.getUrl()}`);
+  }
+}
+
 void bootstrap();

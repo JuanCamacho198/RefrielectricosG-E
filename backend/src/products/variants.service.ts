@@ -99,7 +99,7 @@ export class VariantsService {
         stock: dto.stock,
         image_url: dto.image_url,
         images_url: dto.images_url || [],
-        attributes: dto.attributes as Prisma.InputJsonValue,
+        attributes: dto.attributes,
         isDefault: dto.isDefault ?? false,
         isActive: dto.isActive ?? true,
         position: dto.position ?? 0,
@@ -226,8 +226,7 @@ export class VariantsService {
     if (dto.stock !== undefined) data.stock = dto.stock;
     if (dto.image_url !== undefined) data.image_url = dto.image_url;
     if (dto.images_url !== undefined) data.images_url = dto.images_url;
-    if (dto.attributes !== undefined)
-      data.attributes = dto.attributes as Prisma.InputJsonValue;
+    if (dto.attributes !== undefined) data.attributes = dto.attributes;
     if (dto.isActive !== undefined) data.isActive = dto.isActive;
     if (dto.position !== undefined) data.position = dto.position;
 
@@ -314,7 +313,7 @@ export class VariantsService {
           stock: dto.stock,
           image_url: dto.image_url,
           images_url: dto.images_url || [],
-          attributes: dto.attributes as Prisma.InputJsonValue,
+          attributes: dto.attributes,
           isDefault,
           isActive: dto.isActive ?? true,
           position: dto.position ?? results.length,

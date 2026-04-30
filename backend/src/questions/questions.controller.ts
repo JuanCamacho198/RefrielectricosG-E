@@ -39,7 +39,6 @@ export class QuestionsController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   findByUser(@Request() req: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.questionsService.findByUser(req.user.userId as string);
   }
 }

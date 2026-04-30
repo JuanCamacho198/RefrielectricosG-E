@@ -30,7 +30,7 @@ describe('HttpExceptionFilter', () => {
     getType: jest.fn(),
     switchToRpc: jest.fn(),
     switchToWs: jest.fn(),
-  } as unknown as ArgumentsHost;
+  };
 
   afterEach(() => {
     jest.clearAllMocks();

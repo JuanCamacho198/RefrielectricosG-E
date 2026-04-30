@@ -1,8 +1,14 @@
 import 'dotenv/config';
 import { PrismaClient } from './generated/prisma/client';
 
-// Using DATABASE_URL from .env file
-const prisma = new PrismaClient();
+import { PrismaNeon } from '@prisma/adapter-neon';
+import { Pool } from '@neondatabase/serverless';
+
+const dbUrl =
+  process.env.STORAGE_POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
+const pool = new Pool({ connectionString: dbUrl });
+const adapter = new PrismaNeon(pool as any);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log(`Checking all users in database...`);
