@@ -158,7 +158,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
                   border: '1px solid rgba(229, 231, 235, 0.5)',
                   boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.15)' 
                 }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, 'Ingresos']}
+                formatter={(value: any) => [`$${(Number(value) || 0).toLocaleString()}`, 'Ingresos']}
               />
               <Area 
                 type="monotone" 
