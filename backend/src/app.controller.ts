@@ -38,7 +38,7 @@ export class AppController {
       return {
         status: 'error',
         database: 'disconnected',
-        error: error.message,
+        error: error,
         timestamp: new Date().toISOString(),
       };
     }
