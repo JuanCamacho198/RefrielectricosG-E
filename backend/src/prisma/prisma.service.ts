@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
-import { Pool } from '@neondatabase/serverless';
 
 function getDbUrl(): string {
   const env = process.env;
@@ -25,13 +24,7 @@ function createPrismaClient(): PrismaClient {
     throw new Error('Database URL not found in environment variables');
   }
 
-  const pool = new Pool({
-    connectionString: datasourceUrl,
-    idleTimeoutMillis: 1000,
-    connectionTimeoutMillis: 5000,
-  });
-
-  const adapter = new PrismaNeon(pool);
+  const adapter = new PrismaNeon({ connectionString: datasourceUrl });
   return new PrismaClient({ adapter });
 }
 
@@ -49,13 +42,7 @@ export class PrismaService
     }
 
     const maskedUrl = datasourceUrl.replace(/\/([^:]+):([^@]+)@/, '/$1:***@');
-    const pool = new Pool({
-      connectionString: datasourceUrl,
-      idleTimeoutMillis: 1000,
-      connectionTimeoutMillis: 5000,
-    });
-
-    const adapter = new PrismaNeon(pool as unknown);
+    const adapter = new PrismaNeon({ connectionString: datasourceUrl });
     super({ adapter });
 
     this.logger.log(`🔗 Conectando a Neon: ${maskedUrl}`);
