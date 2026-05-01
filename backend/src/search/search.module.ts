@@ -8,6 +8,6 @@ import { SearchController } from './search.controller';
   imports: [ConfigModule],
   providers: [ElasticsearchProvider, SearchService],
   controllers: [SearchController],
-  exports: [SearchService],
+  exports: [SearchService, ElasticsearchProvider],
 })
 export class SearchModule {}
