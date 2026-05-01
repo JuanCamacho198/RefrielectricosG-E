@@ -8,7 +8,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { OrderStatus } from '../../../generated/prisma/enums';
+import { OrderStatus } from '@prisma/client';
 
 class CreateOrderItemDto {
   @IsString()

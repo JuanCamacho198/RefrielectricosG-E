@@ -18,7 +18,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { Role } from '../../generated/prisma/enums';
+import { Role } from '@prisma/client';
 import { AuthService } from '../auth/auth.service';
 import { AuditLogsService } from '../modules/audit-logs/audit-logs.service';
 import { Request as ExpressRequest } from 'express';
