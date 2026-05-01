@@ -16,6 +16,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { OAuth2Client } from 'google-auth-library';
 import { EmailService } from '../modules/email/email.service';
 
+interface JwtPayload {
+  email?: string;
+  sub: string;
+  role?: string;
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -67,18 +73,22 @@ export class AuthService {
   }
 
   async login(user: Omit<User, 'password'>) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
+    const payload: JwtPayload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
+    };
     // Admin users get longer sessions (24 hours) vs regular users (1 hour)
     const expiresIn = user.role === 'ADMIN' ? '24h' : '1h';
 
     // Generate access token
-    const accessToken = this.jwtService.sign(payload as object, { expiresIn });
+    const accessToken = this.jwtService.sign(payload, { expiresIn } as any);
 
     // Generate refresh token
-    const refreshTokenPayload = { sub: user.id };
-    const refreshToken = this.jwtService.sign(refreshTokenPayload as object, {
-      expiresIn: '7d', // Refresh token lasts 7 days
-    });
+    const refreshTokenPayload: JwtPayload = { sub: user.id };
+    const refreshToken = this.jwtService.sign(refreshTokenPayload, {
+      expiresIn: '7d',
+    } as any);
 
     // Store refresh token in database
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -152,24 +162,21 @@ export class AuthService {
       });
 
       // Generate new access token
-      const accessPayload = {
+      const accessPayload: JwtPayload = {
         email: user.email,
         sub: user.id,
         role: user.role,
       };
       const expiresIn = user.role === 'ADMIN' ? '24h' : '1h';
-      const newAccessToken = this.jwtService.sign(accessPayload as object, {
+      const newAccessToken = this.jwtService.sign(accessPayload, {
         expiresIn,
-      });
+      } as any);
 
       // ROTATION: Generate new refresh token
-      const newRefreshTokenPayload = { sub: user.id };
-      const newRefreshToken = this.jwtService.sign(
-        newRefreshTokenPayload as object,
-        {
-          expiresIn: '7d',
-        },
-      );
+      const newRefreshTokenPayload: JwtPayload = { sub: user.id };
+      const newRefreshToken = this.jwtService.sign(newRefreshTokenPayload, {
+        expiresIn: '7d',
+      } as any);
 
       // Store new refresh token in database
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days

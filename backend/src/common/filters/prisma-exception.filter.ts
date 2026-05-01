@@ -9,20 +9,14 @@ import { Request, Response } from 'express';
 import type { ErrorResponse } from '../interfaces/error-response.interface';
 
 // Import Prisma error types directly from the generated client
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-  PrismaClientRustPanicError,
-  PrismaClientInitializationError,
-  PrismaClientUnknownRequestError,
-} from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 
 @Catch(
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-  PrismaClientRustPanicError,
-  PrismaClientInitializationError,
-  PrismaClientUnknownRequestError,
+  Prisma.PrismaClientKnownRequestError,
+  Prisma.PrismaClientValidationError,
+  Prisma.PrismaClientRustPanicError,
+  Prisma.PrismaClientInitializationError,
+  Prisma.PrismaClientUnknownRequestError,
 )
 export class PrismaExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(PrismaExceptionFilter.name);
@@ -38,14 +32,14 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     let details: Record<string, any> | undefined;
 
     // Handle PrismaClientKnownRequestError (errors with specific error codes)
-    if (exception instanceof PrismaClientKnownRequestError) {
+    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
       const error = this.handleKnownRequestError(exception);
       status = error.status;
       message = error.message;
       details = error.details;
     }
     // Handle PrismaClientValidationError (schema validation errors)
-    else if (exception instanceof PrismaClientValidationError) {
+    else if (exception instanceof Prisma.PrismaClientValidationError) {
       status = HttpStatus.BAD_REQUEST;
       message = 'Invalid data provided';
       details = {
@@ -54,7 +48,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
       };
     }
     // Handle PrismaClientRustPanicError (critical internal errors)
-    else if (exception instanceof PrismaClientRustPanicError) {
+    else if (exception instanceof Prisma.PrismaClientRustPanicError) {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'A critical database error occurred';
       details = {
@@ -63,7 +57,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
       };
     }
     // Handle PrismaClientInitializationError (connection errors)
-    else if (exception instanceof PrismaClientInitializationError) {
+    else if (exception instanceof Prisma.PrismaClientInitializationError) {
       status = HttpStatus.SERVICE_UNAVAILABLE;
       message = 'Database connection failed';
       details = {
@@ -72,7 +66,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
       };
     }
     // Handle unknown Prisma errors
-    else if (exception instanceof PrismaClientUnknownRequestError) {
+    else if (exception instanceof Prisma.PrismaClientUnknownRequestError) {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'An unexpected database error occurred';
     }
@@ -101,7 +95,9 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     response.status(status).json(errorResponse);
   }
 
-  private handleKnownRequestError(exception: PrismaClientKnownRequestError): {
+  private handleKnownRequestError(
+    exception: Prisma.PrismaClientKnownRequestError,
+  ): {
     status: number;
     message: string;
     details?: Record<string, any>;
