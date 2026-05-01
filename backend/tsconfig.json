@@ -19,8 +19,8 @@
     "types": ["node", "jest", "multer"],
     "incremental": true,
     "paths": {
-      "@prisma/client": ["./node_modules/.prisma/client"],
-      "@prisma/client/*": ["./node_modules/.prisma/client/*"]
+      "@prisma/client": ["./node_modules/@prisma/client"],
+      "@prisma/client/*": ["./node_modules/@prisma/client/*"]
     },
 
     "skipLibCheck": true,
