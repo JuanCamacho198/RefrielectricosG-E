@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "moduleResolution": "node10",
-    "ignoreDeprecations": "5.0",
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "rootDir": "./",
     "esModuleInterop": true,
     "isolatedModules": true,
