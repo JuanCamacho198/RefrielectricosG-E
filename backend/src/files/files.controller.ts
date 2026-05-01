@@ -4,6 +4,7 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Throttle } from '@nestjs/throttler';
@@ -19,7 +20,11 @@ export class FilesController {
   }) // 5 por segundo, 20 por 10 segundos
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('productRef') productRef?: string,
+    @Body('assetType') assetType?: string,
+  ) {
     if (!file) {
       throw new BadRequestException('File is required');
     }
@@ -29,7 +34,11 @@ export class FilesController {
       throw new BadRequestException('Only image files are allowed!');
     }
 
-    const result = (await this.filesService.uploadImage(file)) as {
+    const result = (await this.filesService.uploadImage(
+      file,
+      productRef,
+      assetType ?? 'gallery',
+    )) as {
       secure_url: string;
       public_id: string;
     };

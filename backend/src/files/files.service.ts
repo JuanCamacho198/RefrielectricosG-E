@@ -5,12 +5,33 @@ import { Readable } from 'stream';
 
 @Injectable()
 export class FilesService {
+  private sanitizePathSegment(value: string): string {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-_]/g, '');
+  }
+
+  private buildProductFolder(
+    productRef?: string,
+    assetType = 'gallery',
+  ): string {
+    const safeProductRef = this.sanitizePathSegment(productRef || 'general');
+    const safeAssetType = this.sanitizePathSegment(assetType || 'gallery');
+    return `refrielectricos/products/${safeProductRef}/${safeAssetType}`;
+  }
+
   async uploadImage(
     file: Express.Multer.File,
+    productRef?: string,
+    assetType = 'gallery',
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    const folder = this.buildProductFolder(productRef, assetType);
+
     return new Promise((resolve, reject) => {
       const upload = cloudinary.uploader.upload_stream(
-        { folder: 'refrielectricos' },
+        { folder },
         (error, result) => {
           if (error) return reject(new Error(error.message));
           resolve(result);
