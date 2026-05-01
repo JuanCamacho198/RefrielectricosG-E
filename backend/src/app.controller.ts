@@ -34,7 +34,7 @@ export class AppController {
         database: 'connected',
         timestamp: new Date().toISOString(),
       };
-    } catch (error: any) {
+    } catch (error) {
       return {
         status: 'error',
         database: 'disconnected',
@@ -42,5 +42,22 @@ export class AppController {
         timestamp: new Date().toISOString(),
       };
     }
+  }
+
+  @Get('health/env')
+  getHealthEnv() {
+    // Debug: show which env vars are present (not their values)
+    const vars = {
+      DATABASE_URL: !!process.env.DATABASE_URL,
+      STORAGE_DATABASE_URL: !!process.env.STORAGE_DATABASE_URL,
+      STORAGE_POSTGRES_PRISMA_URL: !!process.env.STORAGE_POSTGRES_PRISMA_URL,
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: !!process.env.VERCEL,
+    };
+    return {
+      status: 'ok',
+      envVarsPresent: vars,
+      timestamp: new Date().toISOString(),
+    };
   }
 }
