@@ -1,0 +1,19 @@
+aws_region              = "us-east-1"
+project_name            = "refrielectricos-ecommerce"
+environment             = "initial"
+cost_center             = "it-infrastructure"
+vpc_cidr                = "10.10.0.0/16"
+public_subnets          = ["10.10.1.0/24", "10.10.2.0/24"]
+private_subnets         = ["10.10.11.0/24", "10.10.12.0/24"]
+allowed_payment_cidrs   = ["0.0.0.0/0"]
+frontend_instance_type  = "t3.small"
+backend_instance_type   = "t3.small"
+db_instance_class       = "db.t3.micro"
+db_allocated_storage    = 20
+db_name                 = "refrielectricos"
+db_username             = "postgres"
+db_password             = "change-me"
+assets_bucket_name      = "refrielectricos-assets-initial"
+budget_limit_usd        = 76.25
+alert_emails            = ["equipo@refrielectricos.com"]
+

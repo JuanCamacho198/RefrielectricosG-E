@@ -57,6 +57,11 @@ uploads/
 
 # Custom ignores
 openspec/
+Refrielectricos.md
+
+#pdf files
+*.pdf
+
 
 github/copilot-instructions.md
 ESTADO_DEL_PROYECTO.md
