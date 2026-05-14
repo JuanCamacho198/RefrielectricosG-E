@@ -62,6 +62,10 @@ Refrielectricos.md
 #pdf files
 *.pdf
 
+# Executables
+*.exe
+
+
 
 github/copilot-instructions.md
 ESTADO_DEL_PROYECTO.md

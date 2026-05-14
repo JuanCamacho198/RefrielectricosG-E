@@ -1,4 +1,9 @@
-data "aws_availability_zones" "available" {}
+# Nota: En un entorno con credenciales reales, usar:
+#   data "aws_availability_zones" "available" {}
+# Se hardcodean las AZs para permitir terraform plan sin credenciales reales.
+locals {
+  azs = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
+}
 
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
@@ -16,7 +21,7 @@ resource "aws_subnet" "public" {
   for_each                = { for i, cidr in var.public_subnets : i => cidr }
   vpc_id                  = aws_vpc.this.id
   cidr_block              = each.value
-  availability_zone       = data.aws_availability_zones.available.names[tonumber(each.key)]
+  availability_zone       = local.azs[tonumber(each.key)]
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { Name = "public-${each.key}", Purpose = "load-balancer", Owner = "juan.camacho", Backup = "false" })
 }
@@ -25,7 +30,7 @@ resource "aws_subnet" "private" {
   for_each          = { for i, cidr in var.private_subnets : i => cidr }
   vpc_id            = aws_vpc.this.id
   cidr_block        = each.value
-  availability_zone = data.aws_availability_zones.available.names[tonumber(each.key)]
+  availability_zone = local.azs[tonumber(each.key)]
   tags              = merge(var.tags, { Name = "private-${each.key}", Purpose = "backend", Owner = "jarlinson.montoya", Backup = "false" })
 }
 

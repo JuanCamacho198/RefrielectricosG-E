@@ -26,7 +26,7 @@ resource "aws_lb_target_group" "backend" {
 
 resource "aws_launch_template" "frontend" {
   name_prefix   = "refri-frontend-"
-  image_id      = "ami-1234567890abcdef0"
+  image_id      = "ami-0c7217cdde317cfec" # Amazon Linux 2023 - us-east-1
   instance_type = var.frontend_instance_type
   vpc_security_group_ids = [var.app_security_group_id]
   tag_specifications {
@@ -37,7 +37,7 @@ resource "aws_launch_template" "frontend" {
 
 resource "aws_launch_template" "backend" {
   name_prefix   = "refri-backend-"
-  image_id      = "ami-1234567890abcdef0"
+  image_id      = "ami-0c7217cdde317cfec" # Amazon Linux 2023 - us-east-1
   instance_type = var.backend_instance_type
   vpc_security_group_ids = [var.app_security_group_id]
   tag_specifications {

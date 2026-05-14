@@ -1,5 +1,12 @@
 provider "aws" {
   region = var.aws_region
+
+  # Los siguientes flags permiten que terraform plan funcione sin credenciales
+  # reales, validando solo la sintaxis y las referencias entre recursos.
+  # En producción estos flags deben eliminarse.
+  skip_credentials_validation = true
+  skip_requesting_account_id  = true
+  skip_metadata_api_check     = true
 }
 
 locals {
